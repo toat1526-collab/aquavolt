@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaVolt | Respaldo Eléctrico con Agua de Lluvia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#031F4B',
+                            950: '#01122E'
+                        },
+                        cyanBrand: {
+                            400: '#00E5D8',
+                            500: '#00C8BE'
+                        },
+                        cobalt: {
+                            600: '#0056B3',
+                            700: '#004085'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .rain-drop {
+            animation: drop 1.2s infinite linear;
+        }
+        @keyframes drop {
+            0% { transform: translateY(-15px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(110px); opacity: 0; }
+        }
+        .electric-flow {
+            stroke-dasharray: 8, 8;
+            animation: dash 0.8s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -16; }
+        }
+        .water-fill {
+            transition: height 0.6s ease-in-out, y 0.6s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-cyanBrand-400 selection:text-navy-900">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg viewBox="0 0 100 120" class="w-full h-full">
+                        <path d="M50 5 C50 5, 10 55, 10 80 A 40 40 0 0 0 90 80 C 90 55, 50 5, 50 5 Z" fill="#031F4B"/>
+                        <polygon points="55,25 30,65 50,65 45,100 70,55 50,55" fill="#00E5D8"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-black tracking-tight text-navy-900">Aqua<span class="text-cobalt-600">Volt</span></span>
+                    <span class="text-[9px] tracking-widest text-slate-500 uppercase font-bold">Respaldo Pluvial Corporativo</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="#solucion" class="hover:text-cobalt-600 transition-colors">Sistema</a>
+                <a href="#mercado" class="hover:text-cobalt-600 transition-colors">Mercado</a>
+                <a href="#equipo" class="hover:text-cobalt-600 transition-colors">Directorio</a>
+                <a href="#finanzas" class="hover:text-cobalt-600 transition-colors">Presupuesto</a>
+            </nav>
+
+            <!-- CTA Actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="#solucion" class="px-5 py-2.5 rounded-lg border border-slate-300 text-navy-900 font-bold text-sm hover:bg-slate-100 transition-all">
+                    Ver Prototipo
+                </a>
+                <a href="#contacto" class="px-5 py-2.5 rounded-lg bg-navy-900 text-white font-bold text-sm hover:bg-cobalt-600 transition-all shadow-md">
+                    Solicitar Cotización
+                </a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="mobileMenuBtn" class="md:hidden text-2xl text-navy-900 focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-6 py-4 flex flex-col gap-4 font-semibold text-slate-700">
+            <a href="#solucion" class="hover:text-cobalt-600">Sistema</a>
+            <a href="#mercado" class="hover:text-cobalt-600">Mercado</a>
+            <a href="#equipo" class="hover:text-cobalt-600">Directorio</a>
+            <a href="#finanzas" class="hover:text-cobalt-600">Presupuesto</a>
+            <a href="#contacto" class="px-4 py-2 bg-navy-900 text-white rounded-lg text-center">Solicitar Cotización</a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-b from-slate-100 via-white to-slate-50 border-b border-slate-200 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Content -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 text-navy-900 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-shield-halved text-cobalt-600"></i> Proyecto STEAM 2026 • Colegio San Ignacio de Loyola
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-navy-900 leading-tight tracking-tight">
+                        Respaldo eléctrico inteligente aprovechando el <span class="text-cobalt-600">agua de lluvia</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 max-w-2xl font-normal leading-relaxed">
+                        Solución corporativa y residencial de respaldo hidroeléctrico de emergencia con batería LiFePO4 e inversor comercial, diseñado para garantizar continuidad ante cortes de red.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#solucion" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-navy-900 text-white font-bold text-center hover:bg-cobalt-600 transition-all shadow-lg flex items-center justify-center gap-2">
+                            <span>Simulador Interactivo</span>
+                            <i class="fa-solid fa-bolt text-cyanBrand-400 text-xs"></i>
+                        </a>
+                        <a href="#finanzas" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white border border-slate-300 text-navy-900 font-bold text-center hover:bg-slate-100 transition-all shadow-sm">
+                            Presupuesto Comercial
+                        </a>
+                    </div>
+
+                    <!-- Key Metrics Pills -->
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200">
+                        <div>
+                            <div class="text-xl sm:text-2xl font-black text-navy-900 font-mono">Gs. 4.054.000</div>
+                            <div class="text-[11px] text-slate-500 font-semibold uppercase">Sistema Comercial (250L)</div>
+                        </div>
+                        <div>
+                            <div class="text-xl sm:text-2xl font-black text-cobalt-600 font-mono">LiFePO4 50Ah</div>
+                            <div class="text-[11px] text-slate-500 font-semibold uppercase">Batería 12.8V</div>
+                        </div>
+                        <div>
+                            <div class="text-xl sm:text-2xl font-black text-navy-900 font-mono">300W AC</div>
+                            <div class="text-[11px] text-slate-500 font-semibold uppercase">Inversor 220V</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Graphic (SVG Animated Diagram) -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="w-full max-w-md bg-white rounded-2xl p-6 border border-slate-200 shadow-xl relative">
+                        <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                            <span class="text-xs font-bold uppercase tracking-wider text-navy-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyanBrand-400 animate-pulse"></span> Sistema 250L + LiFePO4
+                            </span>
+                            <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-1 rounded font-bold">Modelo Comercial</span>
+                        </div>
+
+                        <!-- Interactive Diagram SVG -->
+                        <svg viewBox="0 0 320 360" class="w-full h-auto">
+                            <!-- Rain Simulation -->
+                            <g>
+                                <line x1="80" y1="10" x2="80" y2="25" stroke="#0056B3" stroke-width="2" class="rain-drop" style="animation-delay: 0.1s;"/>
+                                <line x1="120" y1="5" x2="120" y2="20" stroke="#0056B3" stroke-width="2" class="rain-drop" style="animation-delay: 0.4s;"/>
+                                <line x1="160" y1="12" x2="160" y2="27" stroke="#0056B3" stroke-width="2" class="rain-drop" style="animation-delay: 0.2s;"/>
+                            </g>
+
+                            <!-- Tank 250L -->
+                            <rect x="50" y="45" width="140" height="90" rx="8" fill="#F8FAFC" stroke="#031F4B" stroke-width="2"/>
+                            <text x="120" y="66" text-anchor="middle" fill="#031F4B" font-size="9" font-weight="black">TANQUE DE 250 LITROS</text>
+                            
+                            <rect id="heroWater" x="53" y="75" width="134" height="57" rx="4" fill="#0056B3" opacity="0.8" class="water-fill"/>
+                            <text x="120" y="105" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="bold">Reserva Pluvial 250L</text>
+
+                            <!-- Gate / Valve -->
+                            <path d="M120 135 L120 175" stroke="#031F4B" stroke-width="6"/>
+                            <circle cx="120" cy="155" r="11" fill="#FFFFFF" stroke="#031F4B" stroke-width="2"/>
+                            <text x="138" y="159" fill="#0056B3" font-size="8" font-weight="bold">Actuador</text>
+
+                            <!-- Turbine Generator -->
+                            <circle cx="120" cy="230" r="26" fill="#031F4B"/>
+                            <g class="animate-spin" style="transform-origin: 120px 230px; animation-duration: 6s;">
+                                <line x1="120" y1="210" x2="120" y2="250" stroke="#00E5D8" stroke-width="3"/>
+                                <line x1="100" y1="230" x2="140" y2="230" stroke="#00E5D8" stroke-width="3"/>
+                            </g>
+                            <text x="120" y="270" text-anchor="middle" fill="#64748B" font-size="9" font-weight="bold">Turbina + Generador 400k</text>
+
+                            <!-- Wiring to Battery -->
+                            <path d="M146 230 L230 230 L230 290" fill="none" stroke="#0056B3" stroke-width="3" class="electric-flow"/>
+
+                            <!-- Battery Storage LiFePO4 -->
+                            <rect x="185" y="290" width="90" height="50" rx="6" fill="#031F4B"/>
+                            <rect x="220" y="284" width="20" height="6" rx="2" fill="#00E5D8"/>
+                            <rect x="190" y="296" width="80" height="38" rx="4" fill="#00E5D8" opacity="0.9"/>
+                            <text x="230" y="313" text-anchor="middle" fill="#031F4B" font-size="9" font-weight="black">LiFePO4 50Ah</text>
+                            <text x="230" y="326" text-anchor="middle" fill="#031F4B" font-size="8" font-weight="bold">12.8V / 640Wh</text>
+
+                            <!-- Output Power -->
+                            <path d="M185 315 L120 315" fill="none" stroke="#0056B3" stroke-width="2" stroke-dasharray="3,3"/>
+                            <text x="120" y="340" text-anchor="middle" fill="#031F4B" font-size="9" font-weight="bold">Inversor 220V 300W</text>
+                        </svg>
+
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-500 font-medium">
+                            <span><i class="fa-solid fa-droplet text-cobalt-600"></i> Depósito de 250L</span>
+                            <span class="text-navy-900 font-bold"><i class="fa-solid fa-bolt text-cyanBrand-400"></i> Salida 220V AC</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE SYSTEM & INTERACTIVE SIMULATOR -->
+    <section id="solucion" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-cobalt-600 font-bold text-xs uppercase tracking-widest block mb-2">Funcionamiento Técnico</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-900">Simulador de Operación Hidroeléctrica</h2>
+                <p class="text-slate-600 mt-3">Pruebe los estados del sistema comercial de 250 Litros con banco de energía LiFePO4 e inversor de 300W.</p>
+            </div>
+
+            <!-- Mode Switcher -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex p-1.5 rounded-xl bg-slate-100 border border-slate-200 shadow-inner">
+                    <button id="btnRain" onclick="switchSim('rain')" class="px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all bg-navy-900 text-white shadow-sm">
+                        <i class="fa-solid fa-cloud-rain mr-2"></i>Modo Lluvia (Captación 250L)
+                    </button>
+                    <button id="btnOutage" onclick="switchSim('outage')" class="px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm text-slate-600 hover:text-navy-900 transition-all">
+                        <i class="fa-solid fa-bolt mr-2"></i>Modo Corte de Luz (Generación AC)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Simulator Card Container -->
+            <div class="bg-slate-50 rounded-2xl p-6 lg:p-10 border border-slate-200 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- SVG Diagram interactive -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="simStateLabel" class="text-xs font-mono font-bold text-cobalt-600 uppercase">Estado: Compuerta Cerrada • Almacenando en Tanque 250L</span>
+                            <span class="text-xs text-slate-400 font-medium">AquaVolt Sim v2.0</span>
+                        </div>
+
+                        <svg viewBox="0 0 500 320" class="w-full h-auto">
+                            <!-- Rain Cloud -->
+                            <g id="simCloudGroup">
+                                <path d="M 60 35 Q 50 15 70 10 Q 90 0 110 15 Q 130 5 140 25 Q 155 30 145 45 Z" fill="#0056B3" opacity="0.2"/>
+                                <g fill="#0056B3" class="rain-drop">
+                                    <circle cx="75" cy="50" r="2"/>
+                                    <circle cx="100" cy="45" r="2.5"/>
+                                    <circle cx="125" cy="52" r="2"/>
+                                </g>
+                            </g>
+
+                            <!-- Tank 250L -->
+                            <rect x="40" y="65" width="140" height="110" rx="6" fill="#F8FAFC" stroke="#031F4B" stroke-width="2"/>
+                            <text x="110" y="85" text-anchor="middle" fill="#031F4B" font-size="10" font-weight="black">Depósito Principal (250L)</text>
+                            
+                            <rect id="simWaterRect" x="43" y="100" width="134" height="72" rx="3" fill="#0056B3" opacity="0.8" class="water-fill"/>
+                            <text id="simWaterVolText" x="110" y="140" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="bold">250 Litros Disponibles</text>
+
+                            <!-- Gate/Pipe -->
+                            <path d="M110 175 L110 230" stroke="#031F4B" stroke-width="8"/>
+                            <circle id="simGateIcon" cx="110" cy="200" r="12" fill="#FFFFFF" stroke="#EF4444" stroke-width="3"/>
+                            <text id="simGateText" x="132" y="204" fill="#EF4444" font-size="9" font-weight="bold">ACTUADOR CERRADO</text>
+
+                            <!-- Flow line -->
+                            <path id="simFlowLine" d="M110 200 L110 260 L230 260" fill="none" stroke="#0056B3" stroke-width="4" opacity="0" class="electric-flow"/>
+
+                            <!-- Turbine -->
+                            <circle cx="250" cy="260" r="26" fill="#031F4B"/>
+                            <g id="simTurbineWheel" style="transform-origin: 250px 260px;">
+                                <line x1="250" y1="238" x2="250" y2="282" stroke="#00E5D8" stroke-width="3"/>
+                                <line x1="228" y1="260" x2="272" y2="260" stroke="#00E5D8" stroke-width="3"/>
+                            </g>
+                            <text x="250" y="300" text-anchor="middle" fill="#64748B" font-size="9" font-weight="bold">Turbina + Reg. 350k</text>
+
+                            <!-- Battery LiFePO4 -->
+                            <rect x="375" y="90" width="90" height="110" rx="6" fill="#031F4B"/>
+                            <rect x="410" y="82" width="20" height="8" rx="2" fill="#00E5D8"/>
+                            <rect id="simBatteryBar" x="379" y="135" width="82" height="61" rx="4" fill="#00E5D8" class="water-fill"/>
+                            <text x="420" y="112" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="bold">LiFePO4 12.8V</text>
+                            <text id="simBatPercent" x="420" y="165" text-anchor="middle" fill="#031F4B" font-size="13" font-weight="black">50 Ah (100%)</text>
+
+                            <!-- Inverter Output -->
+                            <rect x="365" y="240" width="110" height="50" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                            <text id="simDevText" x="420" y="265" text-anchor="middle" fill="#64748B" font-size="9" font-weight="bold">INVERSOR 300W OFF</text>
+                            <text id="simDevSubText" x="420" y="280" text-anchor="middle" fill="#64748B" font-size="8">220V AC Standby</text>
+                        </svg>
+                    </div>
+
+                    <!-- Métricas del Sistema Comercial -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="text-xl font-bold text-navy-900">Especificaciones Comerciales</h3>
+                        
+                        <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase">Capacidad Hidráulica</h4>
+                                <span class="text-base font-black text-navy-900">250 Litros de Reserva</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-blue-50 text-cobalt-600 rounded font-mono font-bold text-xs">Tanque Estructurado</span>
+                        </div>
+
+                        <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase">Banco de Almacenamiento</h4>
+                                <span class="text-base font-black text-navy-900">LiFePO4 12,8V / 50Ah</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-blue-50 text-cobalt-600 rounded font-mono font-bold text-xs">640 Wh Útiles</span>
+                        </div>
+
+                        <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase">Conversión Eléctrica</h4>
+                                <span class="text-base font-black text-navy-900">Inversor 12V a 220V AC</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-blue-50 text-cobalt-600 rounded font-mono font-bold text-xs">300W Continuos</span>
+                        </div>
+
+                        <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase">Control de Actuador</h4>
+                                <span class="text-base font-black text-navy-900">Compuerta Automática</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded font-mono font-bold text-xs">Sensor de Red</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: MARKET INDICATORS (SURVEY DATA) -->
+    <section id="mercado" class="py-20 bg-slate-100 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-cobalt-600 font-bold text-xs uppercase tracking-widest block mb-2">Validación de Mercado</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-900">Indicadores Clave (Estudio 50 Participantes)</h2>
+                <p class="text-slate-600 mt-3">Resultados de la encuesta realizada para evaluar la viabilidad de adopción del respaldo hidroeléctrico.</p>
+            </div>
+
+            <!-- Stats Grid Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="text-3xl font-black text-navy-900 mb-1">74%</div>
+                    <div class="text-sm font-bold text-cobalt-600 mb-2">Casas Familiares</div>
+                    <p class="text-xs text-slate-500">37 de 50 encuestados habitan viviendas con espacio óptimo para la recolección pluvial.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="text-3xl font-black text-cobalt-600 mb-1">86%</div>
+                    <div class="text-sm font-bold text-navy-900 mb-2">Apoyo a Renovables</div>
+                    <p class="text-xs text-slate-500">43 participantes consideran de alta utilidad implementar sistemas limpios en el hogar.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="text-3xl font-black text-navy-900 mb-1">80%</div>
+                    <div class="text-sm font-bold text-cobalt-600 mb-2">Prioriza Almacenamiento</div>
+                    <p class="text-xs text-slate-500">40 encuestados destacan la necesidad crítica de reservar energía para emergencias.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="text-3xl font-black text-cobalt-600 mb-1">60%</div>
+                    <div class="text-sm font-bold text-navy-900 mb-2">Sensibilidad al Precio</div>
+                    <p class="text-xs text-slate-500">30 participantes definirán su inversión según el costo final del equipo de respaldo.</p>
+                </div>
+
+            </div>
+
+            <!-- Visual Charts Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                    <h4 class="text-sm font-bold text-navy-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-cobalt-600"></i> Distribución por Tipo de Vivienda
+                    </h4>
+                    <div class="h-56 relative">
+                        <canvas id="chartVivienda"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                    <h4 class="text-sm font-bold text-navy-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-cobalt-600"></i> Disposición a Invertir según Precio
+                    </h4>
+                    <div class="h-56 relative">
+                        <canvas id="chartInversion"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 4: ORGANIGRAMA Y EQUIPO -->
+    <section id="equipo" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-cobalt-600 font-bold text-xs uppercase tracking-widest block mb-2">Gobernanza del Proyecto</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-900">Estructura Directiva AquaVolt</h2>
+                <p class="text-slate-600 mt-3">Organigrama del equipo de estudiantes del Bachillerato Técnico en Informática.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                
+                <!-- Member 1 -->
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 hover:border-cobalt-600 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-navy-900 text-cyanBrand-400 font-black text-xl flex items-center justify-center mx-auto mb-4">
+                        SR
+                    </div>
+                    <h3 class="text-base font-bold text-navy-900">Sebastián Riquelme</h3>
+                    <span class="inline-block text-[11px] font-bold text-cobalt-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md mt-1">Gerencia General</span>
+                    <p class="text-xs text-slate-500 mt-3">Coordinación integral y gestión institucional del prototipo.</p>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 hover:border-cobalt-600 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-navy-900 text-cyanBrand-400 font-black text-xl flex items-center justify-center mx-auto mb-4">
+                        BT
+                    </div>
+                    <h3 class="text-base font-bold text-navy-900">Biel Teixidó</h3>
+                    <span class="inline-block text-[11px] font-bold text-cobalt-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md mt-1">Informática</span>
+                    <p class="text-xs text-slate-500 mt-3">Desarrollo técnico, simulación digital e instrumentación.</p>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 hover:border-cobalt-600 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-navy-900 text-cyanBrand-400 font-black text-xl flex items-center justify-center mx-auto mb-4">
+                        VM
+                    </div>
+                    <h3 class="text-base font-bold text-navy-900">Valentina Méndez</h3>
+                    <span class="inline-block text-[11px] font-bold text-cobalt-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md mt-1">Mercadotecnia</span>
+                    <p class="text-xs text-slate-500 mt-3">Investigación de mercado y estrategia de presentación.</p>
+                </div>
+
+                <!-- Member 4 -->
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 hover:border-cobalt-600 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-navy-900 text-cyanBrand-400 font-black text-xl flex items-center justify-center mx-auto mb-4">
+                        MA
+                    </div>
+                    <h3 class="text-base font-bold text-navy-900">María Luisa Aquino</h3>
+                    <span class="inline-block text-[11px] font-bold text-cobalt-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md mt-1">Finanzas</span>
+                    <p class="text-xs text-slate-500 mt-3">Costos del prototipo y estructura presupuestaria base.</p>
+                </div>
+
+                <!-- Member 5 -->
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 hover:border-cobalt-600 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-navy-900 text-cyanBrand-400 font-black text-xl flex items-center justify-center mx-auto mb-4">
+                        VM
+                    </div>
+                    <h3 class="text-base font-bold text-navy-900">Valentina Mosqueira</h3>
+                    <span class="inline-block text-[11px] font-bold text-cobalt-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md mt-1">Recursos Humanos</span>
+                    <p class="text-xs text-slate-500 mt-3">Gestión de equipo y vinculación comunitaria.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: FINANCIAL DATA & SCALABILITY -->
+    <section id="finanzas" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-cobalt-600 font-bold text-xs uppercase tracking-widest block mb-2">Modelo Financiero Actualizado</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy-900">Presupuesto del Sistema AquaVolt Propuesto</h2>
+                <p class="text-slate-600 mt-3">Costos detallados del sistema comercial de 250 Litros con equipamiento de generación, control y batería LiFePO4 (Alineado al Capítulo V y Excel Financiero).</p>
+            </div>
+
+            <!-- Clarification Notice Card -->
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-10 flex flex-col sm:flex-row gap-4 items-start">
+                <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 text-lg font-bold">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold text-amber-900 uppercase tracking-wide">Nota sobre la Evolución del Presupuesto</h4>
+                    <p class="text-xs text-amber-800 leading-relaxed">
+                        El prototipo físico de laboratorio construido inicialmente correspondió a un armado base de 20 litros (con costo de materiales de Gs. 236.800 a Gs. 252.800). El presupuesto presentado a continuación (<strong>Gs. 4.054.000</strong>) representa la solución comercial completa propuesta para instalación domiciliaria/corporativa con tanque de 250L, batería LiFePO4 de 50Ah, inversor de 300W e instalación profesional.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Financial Card Grid -->
+            <div class="bg-white rounded-2xl p-6 lg:p-8 border border-slate-200 shadow-sm">
+                
+                <!-- Table Header Banner -->
+                <div class="bg-navy-900 text-white rounded-xl p-6 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <span class="text-xs text-cyanBrand-400 font-mono uppercase font-bold">Sistema Comercial Completo</span>
+                        <h3 class="text-xl font-bold">Presupuesto AquaVolt — 250 Litros</h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-300 block">TOTAL ESTIMADO</span>
+                        <span class="text-3xl font-black font-mono text-cyanBrand-400">Gs. 4.054.000</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm text-slate-700">
+                        <thead class="bg-slate-100 text-navy-900 font-bold uppercase text-[10px]">
+                            <tr>
+                                <th class="py-3 px-4">Ítem / Componente</th>
+                                <th class="py-3 px-4 text-right">Total (Gs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold text-navy-900">1. Turbina y generador hidroeléctrico</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold">400.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold text-navy-900">2. Depósito de agua de 250 litros</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold">270.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">3. Captación y filtro de lluvia</td>
+                                <td class="py-3 px-4 text-right font-mono">110.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">4. Tuberías, conexiones y salida</td>
+                                <td class="py-3 px-4 text-right font-mono">140.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">5. Compuerta y actuador</td>
+                                <td class="py-3 px-4 text-right font-mono">300.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">6. Sensor y control de activación</td>
+                                <td class="py-3 px-4 text-right font-mono">180.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">7. Regulador de carga</td>
+                                <td class="py-3 px-4 text-right font-mono">350.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 bg-blue-50/50">
+                                <td class="py-3 px-4 font-bold text-cobalt-600">8. Batería LiFePO4 12,8 V / 50 Ah</td>
+                                <td class="py-3 px-4 text-right font-mono font-black text-cobalt-600">1.194.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold text-navy-900">9. Inversor de 12 V a 220 V, 300 W</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold">250.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">10. Protección eléctrica, cables y caja</td>
+                                <td class="py-3 px-4 text-right font-mono">160.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">11. Estructura de soporte del tanque</td>
+                                <td class="py-3 px-4 text-right font-mono">180.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold text-navy-900">12. Instalación especializada</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold">400.000</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4">13. Embalaje y entrega</td>
+                                <td class="py-3 px-4 text-right font-mono">120.000</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-navy-900 text-white font-bold text-sm">
+                            <tr>
+                                <td class="py-4 px-4 uppercase tracking-wider">TOTAL ESTIMADO SISTEMA COMPLETO:</td>
+                                <td class="py-4 px-4 text-right text-cyanBrand-400 font-mono text-lg font-black">Gs. 4.054.000</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- JS LOGIC -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Simulator Logic
+        function switchSim(mode) {
+            const btnRain = document.getElementById('btnRain');
+            const btnOutage = document.getElementById('btnOutage');
+            const simStateLabel = document.getElementById('simStateLabel');
+            const simWaterRect = document.getElementById('simWaterRect');
+            const simWaterVolText = document.getElementById('simWaterVolText');
+            const simGateIcon = document.getElementById('simGateIcon');
+            const simGateText = document.getElementById('simGateText');
+            const simFlowLine = document.getElementById('simFlowLine');
+            const simTurbineWheel = document.getElementById('simTurbineWheel');
+            const simBatteryBar = document.getElementById('simBatteryBar');
+            const simBatPercent = document.getElementById('simBatPercent');
+            const simDevText = document.getElementById('simDevText');
+            const simDevSubText = document.getElementById('simDevSubText');
+
+            if (mode === 'rain') {
+                btnRain.className = "px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all bg-navy-900 text-white shadow-sm";
+                btnOutage.className = "px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm text-slate-600 hover:text-navy-900 transition-all";
+
+                simStateLabel.textContent = "Estado: Compuerta Cerrada • Almacenando en Tanque 250L";
+                simWaterRect.setAttribute("height", "90");
+                simWaterRect.setAttribute("y", "82");
+                simWaterVolText.textContent = "250 Litros Disponibles";
+
+                simGateIcon.setAttribute("stroke", "#EF4444");
+                simGateText.textContent = "ACTUADOR CERRADO";
+                simGateText.setAttribute("fill", "#EF4444");
+
+                simFlowLine.setAttribute("opacity", "0");
+                simTurbineWheel.classList.remove("animate-spin");
+
+                simBatteryBar.setAttribute("height", "45");
+                simBatteryBar.setAttribute("y", "151");
+                simBatPercent.textContent = "25 Ah (50%)";
+
+                simDevText.textContent = "INVERSOR 300W OFF";
+                simDevSubText.textContent = "220V AC Standby";
+            } else {
+                btnOutage.className = "px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all bg-navy-900 text-white shadow-sm";
+                btnRain.className = "px-6 py-2.5 rounded-lg font-bold text-xs sm:text-sm text-slate-600 hover:text-navy-900 transition-all";
+
+                simStateLabel.textContent = "Estado: ¡Corte de Luz! Generando Energía con Flujo de 250L";
+                simWaterRect.setAttribute("height", "35");
+                simWaterRect.setAttribute("y", "137");
+                simWaterVolText.textContent = "Descarga Hidráulica";
+
+                simGateIcon.setAttribute("stroke", "#00E5D8");
+                simGateText.textContent = "ACTUADOR ABIERTO";
+                simGateText.setAttribute("fill", "#0056B3");
+
+                simFlowLine.setAttribute("opacity", "1");
+                simTurbineWheel.classList.add("animate-spin");
+
+                simBatteryBar.setAttribute("height", "95");
+                simBatteryBar.setAttribute("y", "101");
+                simBatPercent.textContent = "50 Ah (100%)";
+
+                simDevText.textContent = "INVERSOR 300W ACTIVE";
+                simDevSubText.textContent = "Suministrando 220V AC";
+            }
+        }
+
+        // Charts
+        window.addEventListener('load', () => {
+            // Chart Vivienda
+            new Chart(document.getElementById('chartVivienda').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Casas (74%)', 'Departamentos (26%)'],
+                    datasets: [{
+                        data: [37, 13],
+                        backgroundColor: ['#031F4B', '#0056B3'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Chart Inversion
+            new Chart(document.getElementById('chartInversion').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Según Precio', 'Invertiría', 'No Invertiría'],
+                    datasets: [{
+                        data: [60, 30, 10],
+                        backgroundColor: ['#0056B3', '#00E5D8', '#CBD5E1'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#64748B' }, grid: { display: false } },
+                        x: { ticks: { color: '#64748B' }, grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
